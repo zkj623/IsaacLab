@@ -108,7 +108,7 @@ class TerrainGeneratorCfg:
     """The seed for the random number generator. Defaults to None,
     in which case the seed is not set."""
 
-    curriculum: bool = False
+    curriculum: bool = True
     """Whether to use the curriculum mode. Defaults to False.
 
     If True, the terrains are generated based on their difficulty parameter. Otherwise,

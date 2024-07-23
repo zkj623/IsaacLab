@@ -17,12 +17,14 @@ from omni.isaac.lab.utils.assets import ISAACLAB_NUCLEUS_DIR
 
 import omni.isaac.lab_tasks.manager_based.navigation.mdp as mdp
 from omni.isaac.lab_tasks.manager_based.locomotion.velocity.config.anymal_c.flat_env_cfg import AnymalCFlatEnvCfg
-from omni.isaac.lab_tasks.manager_based.locomotion.velocity.config.anymal_c.flat_env_cfg import AnymalCRoughEnvCfg
+from omni.isaac.lab_tasks.manager_based.locomotion.velocity.config.anymal_c.rough_env_cfg import AnymalCRoughEnvCfg
 from omni.isaac.lab_tasks.manager_based.locomotion.velocity.config.unitree_go2.flat_env_cfg import UnitreeGo2FlatEnvCfg
+from omni.isaac.lab_tasks.manager_based.locomotion.velocity.config.unitree_go2.rough_env_cfg import UnitreeGo2RoughEnvCfg
 
-LOW_LEVEL_ENV_CFG = AnymalCFlatEnvCfg()
+# LOW_LEVEL_ENV_CFG = AnymalCFlatEnvCfg()
 # LOW_LEVEL_ENV_CFG = AnymalCRoughEnvCfg()
 # LOW_LEVEL_ENV_CFG = UnitreeGo2FlatEnvCfg()
+LOW_LEVEL_ENV_CFG = UnitreeGo2RoughEnvCfg()
 
 @configclass
 class EventCfg:
@@ -51,8 +53,9 @@ class ActionsCfg:
 
     pre_trained_policy_action: mdp.PreTrainedPolicyActionCfg = mdp.PreTrainedPolicyActionCfg(
         asset_name="robot",
-        policy_path=f"{ISAACLAB_NUCLEUS_DIR}/Policies/ANYmal-C/Blind/policy.pt",
-        # policy_path=f"/home/zkj/IsaacLab/logs/rsl_rl/unitree_go2_rough/2024-07-17_00-04-58/exported/policy.pt",
+        # policy_path=f"{ISAACLAB_NUCLEUS_DIR}/Policies/ANYmal-C/Blind/policy.pt",
+        policy_path=f"/home/zkj/IsaacLab/logs/rsl_rl/unitree_go2_rough/2024-07-17_00-04-58/exported/policy.pt",
+        # policy_path=f"/home/zkj/IsaacLab/logs/rsl_rl/unitree_go2_flat/2024-07-21_16-03-10/exported/policy.pt",
         low_level_decimation=4,
         low_level_actions=LOW_LEVEL_ENV_CFG.actions.joint_pos,
         low_level_observations=LOW_LEVEL_ENV_CFG.observations.policy,

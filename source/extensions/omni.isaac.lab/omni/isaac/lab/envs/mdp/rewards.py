@@ -15,7 +15,7 @@ import torch
 from typing import TYPE_CHECKING
 
 from omni.isaac.lab.assets import Articulation, RigidObject
-from omni.isaac.lab.managers import SceneEntityCfg
+from omni.isaac.lab.managers import SceneEntityCfg, CommandTerm
 from omni.isaac.lab.managers.manager_base import ManagerTermBase
 from omni.isaac.lab.managers.manager_term_cfg import RewardTermCfg
 from omni.isaac.lab.sensors import ContactSensor
@@ -296,3 +296,67 @@ def track_ang_vel_z_exp(
     # compute the error
     ang_vel_error = torch.square(env.command_manager.get_command(command_name)[:, 2] - asset.data.root_ang_vel_b[:, 2])
     return torch.exp(-ang_vel_error / std**2)
+
+
+def track_pos(
+    env: ManagerBasedRLEnv, std: float, command_name: str, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+) -> torch.Tensor:
+    """Reward tracking of position commands using exponential kernel."""
+    # extract the used quantities (to enable type-hinting)
+    asset: RigidObject = env.scene[asset_cfg.name]
+    # compute the error
+    command = env.command_manager.get_command(command_name) # relative position
+    # print(command[:, :2])
+    # print(asset.data.root_pos_w[:, :2])
+    command_t: CommandTerm = env.command_manager.get_term(command_name)
+    distance = (command_t.time_left < 2)*(1-torch.norm(command[:, :2], dim=1)/std)
+    # print(command_t.time_left)
+    # print(distance)
+    return distance.float()
+
+def track_ang(
+    env: ManagerBasedRLEnv, std: float, command_name: str, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+) -> torch.Tensor:
+    """Reward tracking of position commands using exponential kernel."""
+    # extract the used quantities (to enable type-hinting)
+    asset: RigidObject = env.scene[asset_cfg.name]
+    # compute the error
+    command = env.command_manager.get_command(command_name) # relative position
+    command_t: CommandTerm = env.command_manager.get_term(command_name)
+    distance = (command_t.time_left < 2)*(1-torch.abs(command[:, 3])/std)
+    return distance.float()
+
+
+def move_in_direction(
+    env: ManagerBasedRLEnv, command_name: str, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+) -> torch.Tensor:
+    """Reward tracking of linear velocity commands (xy axes) using exponential kernel."""
+    # extract the used quantities (to enable type-hinting)
+    asset: RigidObject = env.scene[asset_cfg.name]
+    # compute the error
+    # pos_derivation = env.command_manager.get_command(command_name)[:, :2] - asset.data.root_pos_w[:, :2] # question
+    # print(env.command_manager.get_command(command_name)[:, :2].shape)
+    command = env.command_manager.get_command(command_name)[:, :2]
+    if command[0, 0] == 0 and command[0, 1] == 0:
+        cos = torch.tensor([0.0], device=env.device)
+    else:
+        dot_product = torch.sum(command * asset.data.root_lin_vel_b[:, :2], dim=1)
+        norm_vector1 = torch.norm(command, dim=1)
+        norm_vector2 = torch.norm(asset.data.root_lin_vel_b[:, :2], dim=1)
+        cos = dot_product / (norm_vector1 * norm_vector2)
+    # print(command)
+    # print(asset.data.root_lin_vel_b[:, :2])
+    # print(cos)
+    return cos.float()
+
+
+def no_wait(
+    env: ManagerBasedRLEnv, threshold: float, command_name: str, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+) -> torch.Tensor:
+    """Reward tracking of linear velocity commands (xy axes) using exponential kernel."""
+    # extract the used quantities (to enable type-hinting)
+    asset: RigidObject = env.scene[asset_cfg.name]
+    command = env.command_manager.get_command(command_name)[:, :2]
+    # compute the error
+    is_low_vel = (torch.norm(asset.data.root_lin_vel_b[:, :2], dim=1) < threshold) & (torch.norm(command, dim=1) > 0.5)
+    return is_low_vel.float()

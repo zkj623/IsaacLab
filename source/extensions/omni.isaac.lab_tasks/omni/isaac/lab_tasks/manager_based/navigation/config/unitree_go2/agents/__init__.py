@@ -3,7 +3,4 @@
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
-"""Navigation environments."""
-
-from .config import anymal_c
-from .config import unitree_go2
+from . import rsl_rl_cfg  # noqa: F401, F403
