@@ -95,7 +95,7 @@ def design_scene() -> tuple[dict, torch.Tensor]:
     if args_cli.show_flat_patches:
         for sub_terrain_name, sub_terrain_cfg in terrain_gen_cfg.sub_terrains.items():
             sub_terrain_cfg.flat_patch_sampling = {
-                sub_terrain_name: FlatPatchSamplingCfg(num_patches=10, patch_radius=0.5, max_height_diff=0.05)
+                sub_terrain_name: FlatPatchSamplingCfg(num_patches=10, patch_radius=0.3, max_height_diff=0.05)
             }
 
     # Handler for terrains importing

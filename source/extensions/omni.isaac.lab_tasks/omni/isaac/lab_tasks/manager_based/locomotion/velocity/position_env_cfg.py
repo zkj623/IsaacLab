@@ -92,7 +92,15 @@ class MySceneCfg(InteractiveSceneCfg):
 class CommandsCfg:
     """Command specifications for the MDP."""
 
-    pose_command = mdp.UniformPose2dCommandCfg(
+    # pose_command = mdp.UniformPose2dCommandCfg(
+    #     asset_name="robot",
+    #     simple_heading=False,
+    #     resampling_time_range=(8.0, 8.0),
+    #     debug_vis=True,
+    #     ranges=mdp.UniformPose2dCommandCfg.Ranges(pos_x=(-3.5, 3.5), pos_y=(-3.5, 3.5), heading=(-math.pi, math.pi)),
+    # )
+
+    pose_command = mdp.TerrainBasedPose2dCommandCfg(
         asset_name="robot",
         simple_heading=False,
         resampling_time_range=(8.0, 8.0),
@@ -228,9 +236,13 @@ class RewardsCfg:
     # # -- penalties
     # lin_vel_z_l2 = RewTerm(func=mdp.lin_vel_z_l2, weight=-2.0)
     # ang_vel_xy_l2 = RewTerm(func=mdp.ang_vel_xy_l2, weight=-0.05)
+    # dof_vel_l2 = RewTerm(func=mdp.joint_vel_l2, weight=-0.001)
     dof_torques_l2 = RewTerm(func=mdp.joint_torques_l2, weight=-1.0e-5)
+    dof_vel_limit = RewTerm(func=mdp.joint_vel_limits, weight=-1, params={"soft_ratio": 1})
+    # dof_torques_limit = RewTerm(func=mdp.applied_torque_limits, weight=-0.2)
+    # base_acc = RewTerm(func=mdp.body_lin_acc_l2, weight=-0.001)
+
     dof_acc_l2 = RewTerm(func=mdp.joint_acc_l2, weight=-2.5e-7)
-    dof_vel_l2 = RewTerm(func=mdp.joint_vel_limits, weight=-1, params={"soft_ratio": 1})
     action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.01)
     # feet_air_time = RewTerm(
     #     func=mdp.feet_air_time,
@@ -279,6 +291,12 @@ class RewardsCfg:
         weight=5,
         params={"std": 2.0, "command_name": "pose_command"},
     )
+
+    # stand_at_target = RewTerm(
+    #     func=mdp.joint_deviation_l1,
+    #     weight=-0.5,
+    #     params={"command_name": "pose_command"},
+    # )
 
     move_direction = RewTerm(
         func=mdp.move_in_direction, 
