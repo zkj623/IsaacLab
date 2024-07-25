@@ -166,7 +166,7 @@ def joint_deviation_l1(env: ManagerBasedRLEnv, command_name: str, asset_cfg: Sce
     command = env.command_manager.get_command(command_name)
     # compute out of limits constraints
     angle = asset.data.joint_pos[:, asset_cfg.joint_ids] - asset.data.default_joint_pos[:, asset_cfg.joint_ids]
-    target_reached = (torch.norm(command[:,:2], dim=1) < 0.25) * (torch.abs(command[:, 3]) < 0.5)
+    target_reached = (torch.norm(command[:,:2], dim=1) < 0.25) * (torch.abs(command[:, 3]) < 0.3)
     return torch.sum(torch.abs(angle), dim=1) * target_reached.float()
 
 

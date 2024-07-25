@@ -19,7 +19,7 @@ class ManagerBasedRLEnvCfg(ManagerBasedEnvCfg):
     ui_window_class_type: type | None = ManagerBasedRLEnvWindow
 
     # general settings
-    is_finite_horizon: bool = False
+    is_finite_horizon: bool = True
     """Whether the learning task is treated as a finite or infinite horizon problem for the agent.
     Defaults to False, which means the task is treated as an infinite horizon problem.
 

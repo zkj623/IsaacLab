@@ -21,7 +21,7 @@ ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
     use_cache=False,
     sub_terrains={
         "pyramid_stairs": terrain_gen.MeshPyramidStairsTerrainCfg(
-            proportion=0.,
+            proportion=0.3,
             step_height_range=(0.05, 0.18),
             step_width=0.3,
             platform_width=3.0,
@@ -32,7 +32,7 @@ ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
             }
         ),
         "pyramid_stairs_inv": terrain_gen.MeshInvertedPyramidStairsTerrainCfg(
-            proportion=0.,
+            proportion=0.3,
             step_height_range=(0.05, 0.18),
             step_width=0.3,
             platform_width=3.0,
@@ -56,22 +56,31 @@ ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
             }
         ),
         "hf_pyramid_slope": terrain_gen.HfPyramidSlopedTerrainCfg(
-            proportion=0., slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
+            proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25,
+            flat_patch_sampling={
+                "target": FlatPatchSamplingCfg(num_patches=30, patch_radius=0.3, max_height_diff=0.05)
+            }
         ),
         "hf_pyramid_slope_inv": terrain_gen.HfInvertedPyramidSlopedTerrainCfg(
-            proportion=0., slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25
+            proportion=0.1, slope_range=(0.0, 0.4), platform_width=2.0, border_width=0.25,
+            flat_patch_sampling={
+                "target": FlatPatchSamplingCfg(num_patches=30, patch_radius=0.3, max_height_diff=0.05)
+            }
         ),
         "rails": terrain_gen.MeshRailsTerrainCfg(
             proportion=0., rail_thickness_range=(0.2,0.2), rail_height_range=(0.2,0.2), platform_width=2.0
         ),
         "pit": terrain_gen.MeshPitTerrainCfg(
-            proportion=0.8, pit_depth_range=(0.15,0.3), platform_width=3.0,
+            proportion=0., pit_depth_range=(0.15,0.3), platform_width=3.0,
             flat_patch_sampling={
                 "target": FlatPatchSamplingCfg(num_patches=30, patch_radius=0.3, max_height_diff=0.05)
             }
         ),
         "gap": terrain_gen.MeshGapTerrainCfg(
-            proportion=0., gap_width_range=(0.15,0.3), platform_width=3.0
+            proportion=0., gap_width_range=(0.15,0.3), platform_width=3.0,
+            flat_patch_sampling={
+                "target": FlatPatchSamplingCfg(num_patches=30, patch_radius=0.3, max_height_diff=0.05)
+            }
         ),
     },
 )
