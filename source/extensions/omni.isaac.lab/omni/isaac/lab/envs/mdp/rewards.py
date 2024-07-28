@@ -366,3 +366,13 @@ def no_wait(
     # compute the error
     is_low_vel = (torch.norm(asset.data.root_lin_vel_b[:, :2], dim=1) < threshold) & (torch.norm(command, dim=1) > 0.5)
     return is_low_vel.float()
+
+
+def positive_x_vel(
+    env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+) -> torch.Tensor:
+    """Reward tracking of linear velocity commands (xy axes) using exponential kernel."""
+    # extract the used quantities (to enable type-hinting)
+    asset: RigidObject = env.scene[asset_cfg.name]
+    # compute the error
+    return asset.data.root_lin_vel_b[:, 0].clip(max=0.0)

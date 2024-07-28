@@ -54,7 +54,7 @@ class ActionsCfg:
     pre_trained_policy_action: mdp.PreTrainedPolicyActionCfg = mdp.PreTrainedPolicyActionCfg(
         asset_name="robot",
         # policy_path=f"{ISAACLAB_NUCLEUS_DIR}/Policies/ANYmal-C/Blind/policy.pt",
-        policy_path=f"/home/zkj/IsaacLab/logs/rsl_rl/unitree_go2_rough/2024-07-17_00-04-58/exported/policy.pt",
+        policy_path=f"/home/zkj/IsaacLab/logs/rsl_rl/unitree_go2_rough/walking_stable_100/exported/policy.pt",
         # policy_path=f"/home/zkj/IsaacLab/logs/rsl_rl/unitree_go2_flat/2024-07-21_16-03-10/exported/policy.pt",
         low_level_decimation=4,
         low_level_actions=LOW_LEVEL_ENV_CFG.actions.joint_pos,
@@ -84,20 +84,32 @@ class RewardsCfg:
     """Reward terms for the MDP."""
 
     termination_penalty = RewTerm(func=mdp.is_terminated, weight=-400.0)
+    # position_tracking = RewTerm(
+    #     func=mdp.position_command_error_tanh,
+    #     weight=0.5,
+    #     params={"std": 2.0, "command_name": "pose_command"},
+    # )
+    # position_tracking_fine_grained = RewTerm(
+    #     func=mdp.position_command_error_tanh,
+    #     weight=0.5,
+    #     params={"std": 0.2, "command_name": "pose_command"},
+    # )
+    # orientation_tracking = RewTerm(
+    #     func=mdp.heading_command_error_abs,
+    #     weight=-0.2,
+    #     params={"command_name": "pose_command"},
+    # )
+
     position_tracking = RewTerm(
-        func=mdp.position_command_error_tanh,
-        weight=0.5,
+        func=mdp.track_pos,
+        weight=10,
         params={"std": 2.0, "command_name": "pose_command"},
     )
-    position_tracking_fine_grained = RewTerm(
-        func=mdp.position_command_error_tanh,
-        weight=0.5,
-        params={"std": 0.2, "command_name": "pose_command"},
-    )
+
     orientation_tracking = RewTerm(
-        func=mdp.heading_command_error_abs,
-        weight=-0.2,
-        params={"command_name": "pose_command"},
+        func=mdp.track_ang,
+        weight=5,
+        params={"std": 2.0, "command_name": "pose_command"},
     )
 
 
@@ -105,9 +117,17 @@ class RewardsCfg:
 class CommandsCfg:
     """Command terms for the MDP."""
 
-    pose_command = mdp.UniformPose2dCommandCfg(
+    # pose_command = mdp.UniformPose2dCommandCfg(
+    #     asset_name="robot",
+    #     simple_heading=False,
+    #     resampling_time_range=(8.0, 8.0),
+    #     debug_vis=True,
+    #     ranges=mdp.UniformPose2dCommandCfg.Ranges(pos_x=(-3.0, 3.0), pos_y=(-3.0, 3.0), heading=(-math.pi, math.pi)),
+    # )
+
+    pose_command = mdp.TerrainBasedPose2dCommandCfg(
         asset_name="robot",
-        simple_heading=False,
+        simple_heading=True,
         resampling_time_range=(8.0, 8.0),
         debug_vis=True,
         ranges=mdp.UniformPose2dCommandCfg.Ranges(pos_x=(-3.0, 3.0), pos_y=(-3.0, 3.0), heading=(-math.pi, math.pi)),
@@ -168,5 +188,10 @@ class NavigationEnvCfg_PLAY(NavigationEnvCfg):
         # make a smaller scene for play
         self.scene.num_envs = 50
         self.scene.env_spacing = 2.5
+        # reduce the number of terrains to save memory
+        if self.scene.terrain.terrain_generator is not None:
+            self.scene.terrain.terrain_generator.num_rows = 5
+            self.scene.terrain.terrain_generator.num_cols = 5
+            self.scene.terrain.terrain_generator.curriculum = False
         # disable randomization for play
         self.observations.policy.enable_corruption = False

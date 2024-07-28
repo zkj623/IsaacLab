@@ -199,7 +199,7 @@ class TerrainBasedPose2dCommand(UniformPose2dCommand):
             self.heading_command_w[env_ids] = torch.where(
                 curr_to_target < curr_to_flipped_target,
                 target_direction,
-                flipped_target_direction,
+                target_direction, # flipped_target_direction
             )
         else:
             # random heading command

@@ -243,7 +243,7 @@ class RewardsCfg:
     # base_acc = RewTerm(func=mdp.body_lin_acc_l2, weight=-0.001)
 
     dof_acc_l2 = RewTerm(func=mdp.joint_acc_l2, weight=-2.5e-7)
-    action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.01)
+    action_rate_l2 = RewTerm(func=mdp.action_rate_l2, weight=-0.1)
     # feet_air_time = RewTerm(
     #     func=mdp.feet_air_time,
     #     weight=0.125,
@@ -310,6 +310,10 @@ class RewardsCfg:
         params={"threshold": 0.2, "command_name": "pose_command"},
     )
 
+    # positive_x_vel = RewTerm(
+    #     func=mdp.positive_x_vel,
+    #     weight=5.0,
+    # )
 
 @configclass
 class TerminationsCfg:
@@ -326,7 +330,7 @@ class TerminationsCfg:
     # )
     bad_orientation = DoneTerm(
         func=mdp.bad_orientation,
-        params={"asset_cfg": SceneEntityCfg("robot", body_names="base"),"limit_angle": math.pi/3},
+        params={"asset_cfg": SceneEntityCfg("robot", body_names="base"),"limit_angle": math.pi/2},
     )
 
 

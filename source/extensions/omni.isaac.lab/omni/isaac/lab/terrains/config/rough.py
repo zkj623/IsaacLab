@@ -43,14 +43,19 @@ ROUGH_TERRAINS_CFG = TerrainGeneratorCfg(
             }
         ),
         "boxes": terrain_gen.MeshRandomGridTerrainCfg(
-            proportion=0.1, grid_width=0.45, grid_height_range=(0.05, 0.2), platform_width=2.0,
+            proportion=0.2, grid_width=0.45, grid_height_range=(0.05, 0.2), platform_width=2.0,
             flat_patch_sampling={
                 "target": FlatPatchSamplingCfg(num_patches=30, patch_radius=0.3, max_height_diff=0.05)
             }
-
+        ),
+        "discrete_obstacles": terrain_gen.HfDiscreteObstaclesTerrainCfg(
+            proportion=0., obstacle_height_mode='fixed', obstacle_height_range=(0.8, 0.8), obstacle_width_range=(0.5, 0.8), num_obstacles=15, platform_width=3.0,
+            flat_patch_sampling={
+                "target": FlatPatchSamplingCfg(num_patches=30, patch_radius=0.4, max_height_diff=0.05)
+            }
         ),
         "random_rough": terrain_gen.HfRandomUniformTerrainCfg(
-            proportion=0.1, noise_range=(0.02, 0.10), noise_step=0.02, border_width=0.25,
+            proportion=0., noise_range=(0.02, 0.10), noise_step=0.02, border_width=0.25,
             flat_patch_sampling={
                 "target": FlatPatchSamplingCfg(num_patches=30, patch_radius=0.3, max_height_diff=0.05)
             }
